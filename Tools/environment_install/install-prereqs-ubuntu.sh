@@ -274,12 +274,19 @@ fi
 
 # Install all packages
 $APT_GET install $BASE_PKGS $SITL_PKGS $PX4_PKGS $ARM_LINUX_PKGS $COVERAGE_PKGS
+# Check if user wants to pip install with --user
+if maybe_prompt_user "Do you want to install pip packages WITHOUT --user? \
+(--user can lead to issues in virtual environments) [N/y]?"; then
+    PIP+=" install"
+else
+    PIP+=" install --user"
+fi
 # Update Pip and Setuptools on old distro
 if [ ${RELEASE_CODENAME} == 'bionic' ]; then
     # use fixed version for package that drop python2 support
-    $PIP install --user -U pip==20.3 setuptools==44.0.0
+    $PIP -U pip==20.3 setuptools==44.0.0
 fi
-$PIP install --user -U $PYTHON_PKGS
+$PIP -U $PYTHON_PKGS
 
 if [[ -z "${DO_AP_STM_ENV}" ]] && maybe_prompt_user "Install ArduPilot STM32 toolchain [N/y]?" ; then
     DO_AP_STM_ENV=1
